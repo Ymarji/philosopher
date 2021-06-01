@@ -6,7 +6,7 @@
 /*   By: ymarji <ymarji@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/06/01 13:27:09 by ymarji            #+#    #+#             */
-/*   Updated: 2021/06/01 13:27:10 by ymarji           ###   ########.fr       */
+/*   Updated: 2021/06/01 15:46:51 by ymarji           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -96,6 +96,7 @@ void sleeping(t_var *var, t_philo *phil)
 void eat(t_var *var, t_philo *phil)
 {
 	print_stat(var, "%lu %d is eating\n", get_time(1, var->start), phil->nbr);
+	phil->timofdeath = get_time(0, 0) + var->arg.time_to_die;
 	var->totalmeal++;
 	usleep(var->arg.time_to_eat * 1000);
 }
@@ -114,7 +115,6 @@ void *to_die(void *arg)
 		{
 			pthread_mutex_lock(&var->print_lock);
 			printf("\033[31m%lu %d died\033[0m\n", get_time(1, var->start), philo->nbr);
-			// pthread_mutex_unlock(&var->print_lock);
 			pthread_mutex_unlock(&var->mt);
 			break;
 		}
@@ -123,7 +123,7 @@ void *to_die(void *arg)
 			printf("%d\n", var->totalmeal);
 			pthread_mutex_lock(&var->print_lock);
 			printf("\033[32m %d DONE\033[0m\n", philo->index);
-			// pthread_mutex_unlock(&var->print_lock);
+			pthread_mutex_unlock(&var->print_lock);
 			pthread_mutex_unlock(&var->mt);
 			break;
 		}
@@ -158,30 +158,20 @@ void *philosopher_life(void *arg)
 	life_end(var, t);
 	while (1)
 	{
-
 		pthread_mutex_lock(&var->fork[t->right]);
-
 		print_stat(var, "%lu %d has taken a fork\n", get_time(1, var->start), t->nbr);
-
 		pthread_mutex_lock(&var->fork[t->left]);
-
 		print_stat(var, "%lu %d has taken a fork\n", get_time(1, var->start), t->nbr);
-
-		t->timofdeath = get_time(0, 0) + var->arg.time_to_die;
 		eat(var, t);
-
 		pthread_mutex_unlock(&var->fork[t->right]);
 		pthread_mutex_unlock(&var->fork[t->left]);
-		
 		sleeping(var, t);
-
 		print_stat(var, "%lu %d is thinking\n", get_time(1, var->start), t->nbr);
-
-		if (t->nmbrofmeal-- == 0)
+		if (--t->nmbrofmeal == 0)
 			while (1)
 			{
 				t->timofdeath = get_time(0, 0) + var->arg.time_to_die;
-				usleep(100);
+				usleep(500);
 			}
 	}
 	return (NULL);
@@ -253,10 +243,6 @@ int main(int ac, char **av)
 		ft_free(var, START);
 		return (1);
 	}
-	// pthread_mutex_init(&var->mt, NULL);
-	// pthread_mutex_init(&var->print_lock, NULL);
-	// pthread_mutex_init(&var->death_lock, NULL);
-	// var->phil = NULL;
 	if (!get_args(var, av))
 	{
 		pthread_mutex_lock(&var->mt);
