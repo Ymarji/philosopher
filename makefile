@@ -1,7 +1,6 @@
 NAME = philo
 LIB = philo.a
-SRC = ./filo_main.c \
-	# ./ls_utile.c
+SRC = ./filo_main.c
 
 
 LIBFT = ./libft/libft.a
