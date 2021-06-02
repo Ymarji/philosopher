@@ -6,7 +6,7 @@
 /*   By: ymarji <ymarji@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/06/01 13:27:09 by ymarji            #+#    #+#             */
-/*   Updated: 2021/06/02 18:07:35 by ymarji           ###   ########.fr       */
+/*   Updated: 2021/06/02 18:11:19 by ymarji           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -123,7 +123,6 @@ void	*to_die(void *arg)
 			printf("%d\n", var->totalmeal);
 			sem_wait(var->print_lock);
 			printf("SIMULATION DONE");
-			// sem_post(var->print_lock);
 			sem_post(var->mt);
 			break;
 		}
