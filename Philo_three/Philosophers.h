@@ -43,7 +43,7 @@ typedef struct s_var
 	sem_t *mt;
 	sem_t *fork;
 	pthread_t tid;
-	sem_t *eating;
+	sem_t *meal;
 	int n_ph;
 	t_philo *phil;
 	t_arg arg;

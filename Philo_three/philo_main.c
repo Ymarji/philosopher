@@ -6,7 +6,7 @@
 /*   By: ymarji <ymarji@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/06/01 13:27:09 by ymarji            #+#    #+#             */
-/*   Updated: 2021/06/03 19:21:23 by ymarji           ###   ########.fr       */
+/*   Updated: 2021/06/03 20:31:56 by ymarji           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -98,6 +98,11 @@ void	eat(t_var *var, t_philo *phil)
 	p_msg(var, "%lu %d is eating\n", get_time(1, var->start), phil->nbr);
 	phil->timofdeath = get_time(0, 0) + var->arg.time_to_die;
 	var->totalmeal++;
+	phil->nmbrofmeal--;
+	if (phil->nmbrofmeal == 0)
+	{
+		sem_post(var->meal);
+	}
 	usleep(var->arg.time_to_eat * 1000);
 }
 
@@ -118,15 +123,14 @@ void	*to_die(void *arg)
 			sem_post(var->mt);
 			break;
 		}
-		// printf("---------%d\n", var->totalmeal);
-		if (var->totalmeal == var->arg.num_eat)
-		{
-			printf("%d\n", var->totalmeal);
-			sem_wait(var->print_lock);
-			printf("SIMULATION DONE\n");
-			sem_post(var->mt);
-			break;
-		}
+		// if (var->totalmeal == var->arg.num_eat)
+		// {
+		// 	printf("%d\n", var->totalmeal);
+		// 	sem_wait(var->print_lock);
+		// 	printf("SIMULATION DONE\n");
+		// 	sem_post(var->mt);
+		// 	break;
+		// }
 		sem_post(var->death_lock);
 		usleep(500);
 	}
@@ -174,17 +178,40 @@ void	*philosopher_life(void *arg)
 	return (NULL);
 }
 
+void	*meal_watch(void *arg)
+{
+	t_var	*var;
+	int		nb;
+
+	nb = 0;
+	var = (t_var *)arg;
+	while (1)
+	{
+		sem_wait(var->meal);
+		nb++;
+		if (nb == var->n_ph)
+		{
+			printf("SIMULATION DONE\n");
+			sem_post(var->mt);
+		}
+	}
+	return (NULL);
+}
+
 void	creat_thread(t_var *var)
 {
 	int	i;
 
 	var->pid = (pid_t *)malloc(sizeof(pid_t) * var->n_ph);
 	sem_unlink("/fork");
+	sem_unlink("/meal");
 	var->fork = sem_open("/fork", O_CREAT, 777, var->n_ph);
+	var->meal = sem_open("/meal", O_CREAT, 777, 0);
 	var->phil = (t_philo *)malloc(sizeof(t_philo) * (var->n_ph));
 	init_philo(var);
 	i = 0;
-	
+	pthread_create(&var->tid, NULL, &meal_watch, var);
+	pthread_detach(var->tid);
 	var->start = get_time(0, 0);
 	while (i < var->n_ph)
 	{
