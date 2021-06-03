@@ -6,7 +6,7 @@
 /*   By: ymarji <ymarji@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/06/01 13:27:09 by ymarji            #+#    #+#             */
-/*   Updated: 2021/06/03 17:13:35 by ymarji           ###   ########.fr       */
+/*   Updated: 2021/06/03 19:21:23 by ymarji           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -110,24 +110,24 @@ void	*to_die(void *arg)
 	var = ph->var;
 	while (1)
 	{
-		pthread_mutex_lock(&var->death_lock);
+		sem_wait(var->death_lock);
 		if (get_time(0, 0) > ph->timofdeath)
 		{
-			pthread_mutex_lock(&var->print_lock);
+			sem_wait(var->print_lock);
 			printf("%lu %d died\n", get_time(1, var->start), ph->nbr);
-			pthread_mutex_unlock(&var->mt);
+			sem_post(var->mt);
 			break;
 		}
-		if (var->totalmeal == var->arg.num_eat * var->n_ph)
+		// printf("---------%d\n", var->totalmeal);
+		if (var->totalmeal == var->arg.num_eat)
 		{
 			printf("%d\n", var->totalmeal);
-			pthread_mutex_lock(&var->print_lock);
+			sem_wait(var->print_lock);
 			printf("SIMULATION DONE\n");
-			// pthread_mutex_unlock(&var->print_lock);
-			pthread_mutex_unlock(&var->mt);
+			sem_post(var->mt);
 			break;
 		}
-		pthread_mutex_unlock(&var->death_lock);
+		sem_post(var->death_lock);
 		usleep(500);
 	}
 	return NULL;
@@ -141,9 +141,9 @@ void	life_end(t_var *var, t_philo *phil)
 
 void	p_msg(t_var *var, char *msg, long arg, int nbr)
 {
-	pthread_mutex_lock(&var->print_lock);
+	sem_wait(var->print_lock);
 	printf(msg, arg, nbr);
-	pthread_mutex_unlock(&var->print_lock);
+	sem_post(var->print_lock);
 }
 
 void	*philosopher_life(void *arg)
@@ -159,15 +159,15 @@ void	*philosopher_life(void *arg)
 	life_end(var, ph);
 	while (1)
 	{
-		pthread_mutex_lock(&var->fork[ph->right]);
+		sem_wait(var->fork);
 		p_msg(var, "%lu %d has taken a fork\n",
 		get_time(1, var->start), ph->nbr);
-		pthread_mutex_lock(&var->fork[ph->left]);
+		sem_wait(var->fork);
 		p_msg(var, "%lu %d has taken a fork\n",
 		get_time(1, var->start), ph->nbr);
 		eat(var, ph);
-		pthread_mutex_unlock(&var->fork[ph->right]);
-		pthread_mutex_unlock(&var->fork[ph->left]);
+		sem_post(var->fork);
+		sem_post(var->fork);
 		sleeping(var, ph);
 		p_msg(var, "%lu %d is thinking\n", get_time(1, var->start), ph->nbr);
 	}
@@ -178,20 +178,22 @@ void	creat_thread(t_var *var)
 {
 	int	i;
 
-	var->fork = (pthread_mutex_t *)malloc(sizeof(pthread_mutex_t) * (var->n_ph));
+	var->pid = (pid_t *)malloc(sizeof(pid_t) * var->n_ph);
+	sem_unlink("/fork");
+	var->fork = sem_open("/fork", O_CREAT, 777, var->n_ph);
 	var->phil = (t_philo *)malloc(sizeof(t_philo) * (var->n_ph));
 	init_philo(var);
-	i = -1;
-	while (++i < var->n_ph)
-		pthread_mutex_init(&(var->fork[i]), NULL);
 	i = 0;
+	
 	var->start = get_time(0, 0);
 	while (i < var->n_ph)
 	{
-
-		pthread_create(&var->tid, NULL, &philosopher_life, &var->phil[i]);
-		pthread_detach(var->tid);
-		usleep(100);
+		var->pid[i] = fork();
+		if (var->pid[i] == 0)
+		{
+			philosopher_life(&var->phil[i]);
+			exit(0);
+		}
 		i++;
 	}
 }
@@ -207,7 +209,10 @@ void	ft_free(t_var *var, int step)
 		if (step == END)
 		{
 			while (++i < var->n_ph)
-				pthread_mutex_destroy(&var->fork[i]);
+				kill(var->pid[i], SIGKILL);
+			sem_close(var->mt);
+			sem_close(var->death_lock);
+			sem_close(var->print_lock);
 			if (var->phil)
 				free(var->phil);
 		}
@@ -217,11 +222,16 @@ void	ft_free(t_var *var, int step)
 
 int	init(t_var *var)
 {
-	if (pthread_mutex_init(&var->mt, NULL)
-	|| pthread_mutex_init(&var->print_lock, NULL)
-	|| pthread_mutex_init(&var->death_lock, NULL))
+	sem_unlink("/g_lock");
+	sem_unlink("/p_lock");
+	sem_unlink("/d_lock");
+	var->mt = sem_open("/g_lock", O_CREAT, 0664, 1);
+	var->print_lock = sem_open("/p_lock", O_CREAT, 0664, 1);
+	var->death_lock = sem_open("/d_lock", O_CREAT, 0664, 1);
+	if (var->mt == SEM_FAILED || var->print_lock == SEM_FAILED
+	|| var->death_lock == SEM_FAILED)
 	{
-		ft_putendl_fd("Error: init mutex !!\n", 2);
+		ft_putendl_fd("Error: init lock !!\n", 2);
 		return (0);
 	}
 	var->phil = NULL;
@@ -242,12 +252,9 @@ int	main(int ac, char **av)
 	}
 	if (!get_args(var, av))
 	{
-		pthread_mutex_lock(&var->mt);
+		sem_wait(var->mt);
 		creat_thread(var);
-		pthread_mutex_lock(&var->mt);
-		pthread_mutex_destroy(&var->mt);
-		pthread_mutex_destroy(&var->death_lock);
-		pthread_mutex_destroy(&var->print_lock);
+		sem_wait(var->mt);
 		ft_free(var, END);
 	}
 	return (0);
