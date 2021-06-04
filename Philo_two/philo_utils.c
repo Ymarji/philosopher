@@ -51,18 +51,12 @@ int		ft_isdigit_str(char *str)
 	return (1);
 }
 
-void	ft_putendl_fd(char *s, int fd)
-{
-	ft_putstr_fd(s, fd);
-	ft_putchar_fd('\n', fd);
-}
-
 void	ft_putchar_fd(char c, int fd)
 {
 	write(fd, &c, sizeof(c));
 }
 
-void	ft_putstr_fd(char *s, int fd)
+void	ft_putendl_fd(char *s, int fd)
 {
 	int	i;
 
@@ -71,4 +65,5 @@ void	ft_putstr_fd(char *s, int fd)
 		return ;
 	while (s[i])
 		ft_putchar_fd(s[i++], fd);
+	ft_putchar_fd('\n', fd);
 }

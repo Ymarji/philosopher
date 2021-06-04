@@ -1,7 +1,9 @@
 NAME = philo
 LIB = philo.a
 SRC = ./philo_main.c \
-	./philo_utils.c
+	./philo_utils.c \
+	./philo_Thread_fc.c \
+	./philo_arg.c
 
 
 
