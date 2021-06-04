@@ -6,7 +6,7 @@
 /*   By: ymarji <ymarji@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/06/01 13:27:09 by ymarji            #+#    #+#             */
-/*   Updated: 2021/06/03 20:31:56 by ymarji           ###   ########.fr       */
+/*   Updated: 2021/06/04 11:35:50 by ymarji           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -98,12 +98,12 @@ void	eat(t_var *var, t_philo *phil)
 	p_msg(var, "%lu %d is eating\n", get_time(1, var->start), phil->nbr);
 	phil->timofdeath = get_time(0, 0) + var->arg.time_to_die;
 	var->totalmeal++;
+	usleep(var->arg.time_to_eat * 1000);
 	phil->nmbrofmeal--;
 	if (phil->nmbrofmeal == 0)
 	{
 		sem_post(var->meal);
 	}
-	usleep(var->arg.time_to_eat * 1000);
 }
 
 void	*to_die(void *arg)
@@ -123,14 +123,6 @@ void	*to_die(void *arg)
 			sem_post(var->mt);
 			break;
 		}
-		// if (var->totalmeal == var->arg.num_eat)
-		// {
-		// 	printf("%d\n", var->totalmeal);
-		// 	sem_wait(var->print_lock);
-		// 	printf("SIMULATION DONE\n");
-		// 	sem_post(var->mt);
-		// 	break;
-		// }
 		sem_post(var->death_lock);
 		usleep(500);
 	}
