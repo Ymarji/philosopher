@@ -6,15 +6,15 @@
 /*   By: ymarji <ymarji@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/06/04 11:45:04 by ymarji            #+#    #+#             */
-/*   Updated: 2021/06/04 11:53:39 by ymarji           ###   ########.fr       */
+/*   Updated: 2021/06/04 18:04:23 by ymarji           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "Philosophers.h"
 
-void	init_philo(t_var *var)
+void init_philo(t_var *var)
 {
-	int	i;
+	int i;
 
 	i = 0;
 	while (i < var->n_ph)
@@ -29,10 +29,9 @@ void	init_philo(t_var *var)
 	}
 }
 
-int	cheack_args(t_var *var, char *av)
+int cheack_args(t_var *var, char *av)
 {
-	if (var->n_ph < 0 || var->arg.time_to_die < 0
-		|| var->arg.time_to_eat < 0 || var->arg.time_to_sleep < 0)
+	if (var->n_ph < 0 || var->arg.time_to_die < 0 || var->arg.time_to_eat < 0 || var->arg.time_to_sleep < 0)
 	{
 		ft_putendl_fd("Error", 2);
 		return (1);
@@ -48,10 +47,10 @@ int	cheack_args(t_var *var, char *av)
 	return (0);
 }
 
-int	get_args(t_var *var, char **av)
+int get_args(t_var *var, char **av)
 {
-	int		i;
-	t_philo	*new;
+	int i;
+	t_philo *new;
 
 	i = 1;
 	while (av[i])
@@ -74,10 +73,10 @@ int	get_args(t_var *var, char **av)
 	return (cheack_args(var, av[5]));
 }
 
-long	get_time(int ind, long start)
+long get_time(int ind, long start)
 {
-	struct timeval	time;
-	long			count;
+	struct timeval time;
+	long count;
 
 	gettimeofday(&time, NULL);
 	count = time.tv_sec * 1000 + time.tv_usec / 1000;
@@ -87,9 +86,9 @@ long	get_time(int ind, long start)
 		return (count - start);
 }
 
-void	ft_free(t_var *var, int step)
+void ft_free(t_var *var, int step)
 {
-	int	i;
+	int i;
 
 	i = -1;
 	if (var)
