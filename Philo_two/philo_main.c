@@ -6,7 +6,7 @@
 /*   By: ymarji <ymarji@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/06/01 13:27:09 by ymarji            #+#    #+#             */
-/*   Updated: 2021/06/05 11:23:32 by ymarji           ###   ########.fr       */
+/*   Updated: 2021/06/05 17:44:20 by ymarji           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,8 +22,10 @@ void	eat(t_var *var, t_philo *phil)
 {
 	p_msg(var, "%lu %d is eating\n", get_time(1, var->start), phil->nbr);
 	phil->timofdeath = get_time(0, 0) + var->arg.time_to_die;
-	var->totalmeal++;
 	usleep(var->arg.time_to_eat * 1000);
+	var->totalmeal++;
+	if (var->arg.num_eat != -1)
+		phil->nmbrofmeal--;
 }
 
 void	p_msg(t_var *var, char *msg, long arg, int nbr)

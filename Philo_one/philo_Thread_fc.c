@@ -6,7 +6,7 @@
 /*   By: ymarji <ymarji@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/06/04 11:39:46 by ymarji            #+#    #+#             */
-/*   Updated: 2021/06/04 17:37:52 by ymarji           ###   ########.fr       */
+/*   Updated: 2021/06/05 17:38:27 by ymarji           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,14 +16,12 @@ void	*philosopher_life(void *arg)
 {
 	t_var	*var;
 	t_philo	*ph;
-	int		i;
 
-	i = 0;
 	ph = (t_philo *)arg;
 	var = ph->var;
 	ph->timofdeath = get_time(0, 0) + var->arg.time_to_die;
 	life_end(var, ph);
-	while (1)
+	while (ph->nmbrofmeal != 0)
 	{
 		pthread_mutex_lock(&var->fork[ph->right]);
 		p_msg(var, "%lu %d has taken a fork\n",
@@ -42,7 +40,7 @@ void	*philosopher_life(void *arg)
 
 int	check_meal(t_var *var, int meal, int totalmeal)
 {
-	if (meal == totalmeal)
+	if (var->arg.num_eat != -1 && meal >= totalmeal)
 	{
 		pthread_mutex_lock(&var->print_lock);
 		printf("SIMULATION DONE\n");
@@ -72,6 +70,8 @@ void	*to_die(void *arg)
 		if (check_meal(var, var->totalmeal, var->arg.num_eat * var->n_ph) == 1)
 			break ;
 		pthread_mutex_unlock(&var->death_lock);
+		if (ph->nmbrofmeal == 0)
+			break ;
 		usleep(500);
 	}
 	return (NULL);

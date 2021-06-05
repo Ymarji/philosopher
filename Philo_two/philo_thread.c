@@ -6,7 +6,7 @@
 /*   By: ymarji <ymarji@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/06/04 18:11:49 by ymarji            #+#    #+#             */
-/*   Updated: 2021/06/05 11:24:46 by ymarji           ###   ########.fr       */
+/*   Updated: 2021/06/05 17:45:18 by ymarji           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,7 +23,7 @@ void	*philosopher_life(void *arg)
 	var = ph->var;
 	ph->timofdeath = get_time(0, 0) + var->arg.time_to_die;
 	life_end(var, ph);
-	while (1)
+	while (ph->nmbrofmeal != 0)
 	{
 		sem_wait(var->fork);
 		p_msg(var, "%lu %d has taken a fork\n",
@@ -42,7 +42,7 @@ void	*philosopher_life(void *arg)
 
 int	check_meal(t_var *var, int meal, int totalmeal)
 {
-	if (meal == totalmeal)
+	if (var->arg.num_eat != -1 && meal >= totalmeal)
 	{
 		sem_wait(var->print_lock);
 		printf("SIMULATION DONE\n");
@@ -72,6 +72,8 @@ void	*to_die(void *arg)
 		if (check_meal(var, var->totalmeal, var->arg.num_eat * var->n_ph) == 1)
 			break ;
 		sem_post(var->death_lock);
+		if (ph->nmbrofmeal == 0)
+			break ;
 		usleep(500);
 	}
 	return (NULL);
