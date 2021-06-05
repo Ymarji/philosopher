@@ -5,8 +5,8 @@
 /*                                                    +:+ +:+         +:+     */
 /*   By: ymarji <ymarji@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2021/06/04 11:45:04 by ymarji            #+#    #+#             */
-/*   Updated: 2021/06/04 18:15:02 by ymarji           ###   ########.fr       */
+/*   Created: 2021/06/04 18:11:54 by ymarji            #+#    #+#             */
+/*   Updated: 2021/06/05 11:21:14 by ymarji           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,8 +31,8 @@ void	init_philo(t_var *var)
 
 int	cheack_args(t_var *var, char *av)
 {
-	if (var->n_ph < 0 || var->arg.time_to_die < 0 || var->arg.time_to_eat < 0
-		|| var->arg.time_to_sleep < 0)
+	if (var->n_ph < 0 || var->arg.time_to_die < 0
+		|| var->arg.time_to_eat < 0 || var->arg.time_to_sleep < 0)
 	{
 		ft_putendl_fd("Error", 2);
 		return (1);
@@ -96,8 +96,9 @@ void	ft_free(t_var *var, int step)
 	{
 		if (step == END)
 		{
-			while (++i < var->n_ph)
-				pthread_mutex_destroy(&var->fork[i]);
+			sem_unlink("/g_lock");
+			sem_unlink("/p_lock");
+			sem_unlink("/d_lock");
 			if (var->phil)
 				free(var->phil);
 		}
