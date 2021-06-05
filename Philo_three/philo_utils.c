@@ -1,17 +1,28 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   philo_utils.c                                      :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: ymarji <ymarji@student.42.fr>              +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2021/06/05 12:07:34 by ymarji            #+#    #+#             */
+/*   Updated: 2021/06/05 12:08:07 by ymarji           ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
 
-# include "Philosophers.h"
+#include "Philosophers.h"
 
-int		ft_atoi(const char *str)
+int	ft_atoi(const char *str)
 {
-	int rslt;
-	int i;
-	int n;
+	int	rslt;
+	int	i;
+	int	n;
 
 	i = 0;
 	n = 1;
 	rslt = 0;
-	while (str[i] == '\t' || str[i] == '\n' || str[i] == '\r' ||
-			str[i] == '\v' || str[i] == '\f' || str[i] == ' ')
+	while (str[i] == '\t' || str[i] == '\n' || str[i] == '\r'
+		|| str[i] == '\v' || str[i] == '\f' || str[i] == ' ')
 		i++;
 	if (str[i] == '-')
 		n = -1;
@@ -27,7 +38,7 @@ int		ft_atoi(const char *str)
 	return (rslt * n);
 }
 
-int		ft_isdigit(int c)
+int	ft_isdigit(int c)
 {
 	if (c >= '0' && c <= '9')
 	{
@@ -36,7 +47,7 @@ int		ft_isdigit(int c)
 	return (0);
 }
 
-int		ft_isdigit_str(char *str)
+int	ft_isdigit_str(char *str)
 {
 	int	i;
 
@@ -51,18 +62,12 @@ int		ft_isdigit_str(char *str)
 	return (1);
 }
 
-void	ft_putendl_fd(char *s, int fd)
-{
-	ft_putstr_fd(s, fd);
-	ft_putchar_fd('\n', fd);
-}
-
 void	ft_putchar_fd(char c, int fd)
 {
 	write(fd, &c, sizeof(c));
 }
 
-void	ft_putstr_fd(char *s, int fd)
+void	ft_putendl_fd(char *s, int fd)
 {
 	int	i;
 
@@ -71,4 +76,5 @@ void	ft_putstr_fd(char *s, int fd)
 		return ;
 	while (s[i])
 		ft_putchar_fd(s[i++], fd);
+	ft_putchar_fd('\n', fd);
 }
