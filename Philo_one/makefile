@@ -9,12 +9,12 @@ SRC = ./philo_main.c \
 
 OBJ = $(SRC:.c=.o)
 
-# FLAGS = -Wall -Wextra -Werror
+FLAGS = -Wall -Wextra -Werror
 
 all: $(NAME)
 
 $(NAME) : $(OBJ) 
-	@ar rcs $(LIB) $(OBJ)
+	ar rcs $(LIB) $(OBJ)
 	gcc $(FLAGS) $(LIB) -o $(NAME)
 
 %.o: %.c

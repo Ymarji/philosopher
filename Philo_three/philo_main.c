@@ -6,7 +6,7 @@
 /*   By: ymarji <ymarji@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/06/01 13:27:09 by ymarji            #+#    #+#             */
-/*   Updated: 2021/06/05 12:06:06 by ymarji           ###   ########.fr       */
+/*   Updated: 2021/06/06 11:16:05 by ymarji           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -74,6 +74,11 @@ int	main(int ac, char **av)
 		creat_pross(var);
 		sem_wait(var->mt);
 		ft_free(var, END);
+	}
+	else
+	{
+		ft_free(var, START);
+		return (1);
 	}
 	return (0);
 }

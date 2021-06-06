@@ -6,7 +6,7 @@
 /*   By: ymarji <ymarji@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/06/04 18:11:54 by ymarji            #+#    #+#             */
-/*   Updated: 2021/06/06 10:44:09 by ymarji           ###   ########.fr       */
+/*   Updated: 2021/06/06 11:11:56 by ymarji           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,8 +31,8 @@ void	init_philo(t_var *var)
 
 int	cheack_args(t_var *var, char *av)
 {
-	if (var->n_ph < 0 || var->arg.time_to_die < 0
-		|| var->arg.time_to_eat < 0 || var->arg.time_to_sleep < 0)
+	if (var->n_ph <= 0 || var->arg.time_to_die <= 0
+		|| var->arg.time_to_eat <= 0 || var->arg.time_to_sleep <= 0)
 	{
 		ft_putendl_fd("Error", 2);
 		return (1);
@@ -51,7 +51,6 @@ int	cheack_args(t_var *var, char *av)
 int	get_args(t_var *var, char **av)
 {
 	int		i;
-	t_philo	*new;
 
 	i = 1;
 	while (av[i])

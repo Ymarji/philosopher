@@ -6,7 +6,7 @@
 /*   By: ymarji <ymarji@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/06/04 11:45:04 by ymarji            #+#    #+#             */
-/*   Updated: 2021/06/04 18:15:02 by ymarji           ###   ########.fr       */
+/*   Updated: 2021/06/06 11:10:34 by ymarji           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,15 +31,15 @@ void	init_philo(t_var *var)
 
 int	cheack_args(t_var *var, char *av)
 {
-	if (var->n_ph < 0 || var->arg.time_to_die < 0 || var->arg.time_to_eat < 0
-		|| var->arg.time_to_sleep < 0)
+	if (var->n_ph <= 0 || var->arg.time_to_die <= 0 || var->arg.time_to_eat <= 0
+		|| var->arg.time_to_sleep <= 0)
 	{
 		ft_putendl_fd("Error", 2);
 		return (1);
 	}
 	if (av)
 	{
-		if (var->arg.num_eat < 0)
+		if (var->arg.num_eat <= 0)
 		{
 			ft_putendl_fd("Error", 2);
 			return (1);
@@ -51,7 +51,6 @@ int	cheack_args(t_var *var, char *av)
 int	get_args(t_var *var, char **av)
 {
 	int		i;
-	t_philo	*new;
 
 	i = 1;
 	while (av[i])
@@ -96,8 +95,12 @@ void	ft_free(t_var *var, int step)
 	{
 		if (step == END)
 		{
+			pthread_mutex_destroy(&var->mt);
+			pthread_mutex_destroy(&var->death_lock);
+			pthread_mutex_destroy(&var->print_lock);
 			while (++i < var->n_ph)
 				pthread_mutex_destroy(&var->fork[i]);
+			free(var->fork);
 			if (var->phil)
 				free(var->phil);
 		}

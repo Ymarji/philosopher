@@ -10,7 +10,7 @@ SRC = ./philo_main.c \
 
 OBJ = $(SRC:.c=.o)
 
-# FLAGS = -Wall -Wextra -Werror
+FLAGS = -Wall -Wextra -Werror
 
 all: $(NAME)
 

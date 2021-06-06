@@ -6,7 +6,7 @@
 /*   By: ymarji <ymarji@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/06/01 13:27:09 by ymarji            #+#    #+#             */
-/*   Updated: 2021/06/06 10:43:40 by ymarji           ###   ########.fr       */
+/*   Updated: 2021/06/06 11:10:17 by ymarji           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -63,10 +63,12 @@ int	main(int ac, char **av)
 		pthread_mutex_lock(&var->mt);
 		creat_thread(var);
 		pthread_mutex_lock(&var->mt);
-		pthread_mutex_destroy(&var->mt);
-		pthread_mutex_destroy(&var->death_lock);
-		pthread_mutex_destroy(&var->print_lock);
 		ft_free(var, END);
+	}
+	else
+	{
+		ft_free(var, START);
+		return (1);
 	}
 	return (0);
 }
