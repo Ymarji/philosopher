@@ -1,5 +1,5 @@
 # philosopher
 
-Dinning Philosopher Problem
+Dinning Philosopher Problem.
 
 Using mutex & Semaphore ;)
