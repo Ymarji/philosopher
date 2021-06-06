@@ -6,7 +6,7 @@
 /*   By: ymarji <ymarji@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/06/04 18:11:54 by ymarji            #+#    #+#             */
-/*   Updated: 2021/06/05 11:21:14 by ymarji           ###   ########.fr       */
+/*   Updated: 2021/06/06 10:44:09 by ymarji           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -96,11 +96,11 @@ void	ft_free(t_var *var, int step)
 	{
 		if (step == END)
 		{
-			sem_unlink("/g_lock");
-			sem_unlink("/p_lock");
-			sem_unlink("/d_lock");
 			if (var->phil)
 				free(var->phil);
+			sem_unlink("/g_lock");
+			sem_unlink("/d_lock");
+			sem_unlink("/p_lock");
 		}
 		free(var);
 	}

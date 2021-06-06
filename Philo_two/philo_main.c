@@ -6,7 +6,7 @@
 /*   By: ymarji <ymarji@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/06/01 13:27:09 by ymarji            #+#    #+#             */
-/*   Updated: 2021/06/05 17:44:20 by ymarji           ###   ########.fr       */
+/*   Updated: 2021/06/06 10:41:19 by ymarji           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,9 +23,9 @@ void	eat(t_var *var, t_philo *phil)
 	p_msg(var, "%lu %d is eating\n", get_time(1, var->start), phil->nbr);
 	phil->timofdeath = get_time(0, 0) + var->arg.time_to_die;
 	usleep(var->arg.time_to_eat * 1000);
+	sem_wait(var->need);
 	var->totalmeal++;
-	if (var->arg.num_eat != -1)
-		phil->nmbrofmeal--;
+	sem_post(var->need);
 }
 
 void	p_msg(t_var *var, char *msg, long arg, int nbr)
@@ -39,8 +39,10 @@ int	init(t_var *var)
 {
 	sem_unlink("/g_lock");
 	sem_unlink("/p_lock");
+	sem_unlink("/need");
 	sem_unlink("/d_lock");
 	var->mt = sem_open("/g_lock", O_CREAT, 0664, 1);
+	var->need = sem_open("/need", O_CREAT, 0664, 1);
 	var->print_lock = sem_open("/p_lock", O_CREAT, 0664, 1);
 	var->death_lock = sem_open("/d_lock", O_CREAT, 0664, 1);
 	if (var->mt == SEM_FAILED || var->print_lock == SEM_FAILED
@@ -49,6 +51,7 @@ int	init(t_var *var)
 		ft_putendl_fd("Error: init lock !!\n", 2);
 		return (0);
 	}
+	var->totalmeal = 0;
 	var->phil = NULL;
 	return (1);
 }

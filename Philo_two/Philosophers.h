@@ -6,7 +6,7 @@
 /*   By: ymarji <ymarji@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/06/05 11:27:33 by ymarji            #+#    #+#             */
-/*   Updated: 2021/06/05 11:27:35 by ymarji           ###   ########.fr       */
+/*   Updated: 2021/06/05 19:19:30 by ymarji           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -45,6 +45,7 @@ typedef struct s_var
 {
 	int			totalmeal;
 	sem_t		*death_lock;
+	sem_t		*need;
 	sem_t		*print_lock;
 	long		start;
 	long		end;
